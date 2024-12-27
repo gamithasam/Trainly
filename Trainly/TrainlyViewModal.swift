@@ -117,3 +117,24 @@ class TrainlyViewModal: ObservableObject {
         saveWorkout()
     }
 }
+
+
+extension TrainlyViewModal {
+    static func preview() -> TrainlyViewModal {
+        let vm = TrainlyViewModal()
+        
+        // Add sample workouts
+        let sampleWorkouts = [
+            ("Morning Workout", "A refreshing start to your day"),
+            ("Strength Training", "Build muscle and strength"),
+            ("Cardio Blast", "High-intensity cardio workout")
+        ]
+        
+        let sampleImage = UIImage(named: "Row")
+        for (title, desc) in sampleWorkouts {
+            vm.addWorkout(title: title, desc: desc, cover: sampleImage)
+        }
+        
+        return vm
+    }
+}
