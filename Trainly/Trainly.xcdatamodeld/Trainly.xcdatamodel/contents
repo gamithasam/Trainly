@@ -5,6 +5,7 @@
         <attribute name="name" optional="YES" attributeType="String"/>
     </entity>
     <entity name="WorkoutEntity" representedClassName="WorkoutEntity" syncable="YES" codeGenerationType="class">
+        <attribute name="cover" optional="YES" attributeType="Binary"/>
         <attribute name="desc" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
     </entity>

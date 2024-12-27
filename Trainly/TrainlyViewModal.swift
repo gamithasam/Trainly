@@ -6,6 +6,7 @@
 //
 
 import CoreData
+import UIKit
 
 class TrainlyViewModal: ObservableObject {
     let container: NSPersistentContainer
@@ -51,10 +52,15 @@ class TrainlyViewModal: ObservableObject {
         saveExercise()
     }
     
-    func addWorkout(title: String, desc: String) {
+    func addWorkout(title: String, desc: String, cover: UIImage?) {
         let newWorkout = WorkoutEntity(context: container.viewContext)
         newWorkout.name = title
         newWorkout.desc = desc
+        
+        // Convert UIImage to Data
+        if let uiImage = cover {
+            newWorkout.cover = uiImage.pngData()
+        }
 
         saveWorkout()
     }
