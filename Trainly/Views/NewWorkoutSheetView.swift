@@ -107,6 +107,7 @@ struct NewWorkoutSheetView: View {
                         addWorkoutSheetPresented = false
                     }
                     .fontWeight(.bold)
+                    .disabled(title == "" || desc == "" || selectedImage == nil)
                 }
             }
             .navigationTitle("New Workout")
