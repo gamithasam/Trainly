@@ -122,6 +122,7 @@ struct ExerciseItem: View {
     let geometry: GeometryProxy
     let isSelected: Bool
     let item: ExerciseEntity
+    @State private var showTooltip = false
     
     var width:CGFloat {
         return (geometry.size.width - 48) / 3
@@ -142,7 +143,7 @@ struct ExerciseItem: View {
                 // Add image here
                 RoundedRectangle(cornerRadius: 10)
                     .frame(width: width-6, height: height-6)
-                    
+                
                 ZStack {
                     Rectangle()
                         .fill(.regularMaterial)
@@ -153,9 +154,60 @@ struct ExerciseItem: View {
                 }
             }
             .clipShape(RoundedRectangle(cornerRadius: 10))
+            
+            VStack {
+                HStack {
+                    Spacer()
+                    ZStack(alignment: .topTrailing) {
+                        Image(systemName: "info.circle")
+                            .font(.callout)
+                            .foregroundColor(.gray)
+                            .onTapGesture {
+                                withAnimation {
+                                    showTooltip.toggle()
+                                }
+                            }
+                        
+                        if showTooltip {
+                            CustomTooltip(text: item.desc ?? "No description")
+                                .offset(y: 25)
+                                .transition(.opacity)
+                                .zIndex(1)
+                        }
+                    }
+                }
+                Spacer()
+            }
+            .padding(8)
+            
+            if showTooltip {
+                Color.clear
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        withAnimation {
+                            showTooltip = false
+                        }
+                    }
+            }
         }
         .frame(width: width, height: height)
         
+    }
+}
+
+struct CustomTooltip: View {
+    let text: String
+    
+    var body: some View {
+        Text(text)
+            .font(.caption)
+            .padding(8)
+            .background(Color(.systemGray6))
+            .foregroundColor(.primary)
+            .cornerRadius(8)
+            .shadow(radius: 2)
+            .frame(maxWidth: 200)
+            .fixedSize(horizontal: false, vertical: true)
     }
 }
 
