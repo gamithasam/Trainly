@@ -18,6 +18,7 @@ struct SelectExerciseView: View {
     @State private var reps: Int = 1
     @State private var duration: Int = 1
     @State private var showAlert = false
+    @Binding var selectedExercises: ExerciseEntity?
     
     var body: some View {
         NavigationView {
@@ -88,6 +89,7 @@ struct SelectExerciseView: View {
                                 reps = 1
                                 sets = 1
                                 duration = 1
+                                selectedExercises = selectedIndex
                                 selectedIndex = nil
                                 showAlert = true
                             }) {
@@ -211,6 +213,6 @@ struct CustomTooltip: View {
     }
 }
 
-#Preview {
-    SelectExerciseView(type: "Warm-Up")
-}
+//#Preview {
+//    SelectExerciseView(type: "Warm-Up")
+//}

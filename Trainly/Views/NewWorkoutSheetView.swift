@@ -10,6 +10,7 @@ import SwiftUI
 struct NewWorkoutSheetView: View {
     @State var title: String = ""
     @State var desc: String = ""
+    @State var selectedExercises: ExerciseEntity?
     @State private var selectedImage: UIImage?
     @State private var isImagePickerPresented: Bool = false
     @Binding var addWorkoutSheetPresented: Bool
@@ -18,6 +19,13 @@ struct NewWorkoutSheetView: View {
     var body: some View {
         NavigationView {
             VStack {
+                if let unwrappedExercises = selectedExercises {
+                    List {
+                        //                    ForEach(selectedExercises) { exercise in
+                        Text(unwrappedExercises.name ?? "No Name")
+                        //                    }
+                    }
+                }
                 Group {
                     if let unwrappedImage = selectedImage {
                         Image(uiImage: unwrappedImage)
@@ -70,21 +78,21 @@ struct NewWorkoutSheetView: View {
                     
                     Section {
                         NavigationLink("Warm-Up") {
-                            SelectExerciseView(type: "Warm-Up")
+                            SelectExerciseView(type: "Warm-Up", selectedExercises: $selectedExercises)
                         }
                         .foregroundColor(.accentColor)
                     }
                     
                     Section {
                         NavigationLink("Workout") {
-                            SelectExerciseView(type: "Workout")
+                            SelectExerciseView(type: "Workout", selectedExercises: $selectedExercises)
                         }
                         .foregroundColor(.accentColor)
                     }
                     
                     Section {
                         NavigationLink("Cool-Down") {
-                            SelectExerciseView(type: "Cool-Down")
+                            SelectExerciseView(type: "Cool-Down", selectedExercises: $selectedExercises)
                         }
                         .foregroundColor(.accentColor)
                     }
@@ -116,6 +124,6 @@ struct NewWorkoutSheetView: View {
     }
 }
 
-#Preview {
-    NewWorkoutSheetView(addWorkoutSheetPresented: .constant(true))
-}
+//#Preview {
+//    NewWorkoutSheetView(addWorkoutSheetPresented: .constant(true))
+//}
