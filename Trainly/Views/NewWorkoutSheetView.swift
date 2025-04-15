@@ -10,7 +10,9 @@ import SwiftUI
 struct NewWorkoutSheetView: View {
     @State var title: String = ""
     @State var desc: String = ""
-    @State var selectedExercises: ExerciseEntity?
+    @State var selectedWarmups: ExerciseEntity?
+    @State var selectedWorkouts: ExerciseEntity?
+    @State var selectedCooldowns: ExerciseEntity?
     @State private var selectedImage: UIImage?
     @State private var isImagePickerPresented: Bool = false
     @Binding var addWorkoutSheetPresented: Bool
@@ -19,7 +21,7 @@ struct NewWorkoutSheetView: View {
     var body: some View {
         NavigationView {
             VStack {
-                if let unwrappedExercises = selectedExercises {
+                if let unwrappedExercises = selectedWarmups {
                     List {
                         //                    ForEach(selectedExercises) { exercise in
                         Text(unwrappedExercises.name ?? "No Name")
@@ -78,21 +80,21 @@ struct NewWorkoutSheetView: View {
                     
                     Section {
                         NavigationLink("Warm-Up") {
-                            SelectExerciseView(type: "Warm-Up", selectedExercises: $selectedExercises)
+                            SelectExerciseView(type: "Warm-Up", selectedExercises: $selectedWarmups)
                         }
                         .foregroundColor(.accentColor)
                     }
                     
                     Section {
                         NavigationLink("Workout") {
-                            SelectExerciseView(type: "Workout", selectedExercises: $selectedExercises)
+                            SelectExerciseView(type: "Workout", selectedExercises: $selectedWorkouts)
                         }
                         .foregroundColor(.accentColor)
                     }
                     
                     Section {
                         NavigationLink("Cool-Down") {
-                            SelectExerciseView(type: "Cool-Down", selectedExercises: $selectedExercises)
+                            SelectExerciseView(type: "Cool-Down", selectedExercises: $selectedCooldowns)
                         }
                         .foregroundColor(.accentColor)
                     }
