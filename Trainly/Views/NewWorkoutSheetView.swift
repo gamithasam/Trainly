@@ -7,12 +7,28 @@
 
 import SwiftUI
 
+// Add this struct at the top level (outside the View struct)
+struct ExerciseWrapper: Identifiable, Equatable {
+    let id = UUID()
+    let entity: ExerciseEntity
+    let name: String
+    
+    init(entity: ExerciseEntity) {
+        self.entity = entity
+        self.name = entity.name ?? "Unknown"
+    }
+    
+    static func == (lhs: ExerciseWrapper, rhs: ExerciseWrapper) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
+
 struct NewWorkoutSheetView: View {
     @State var title: String = ""
     @State var desc: String = ""
-    @State var selectedWarmups: [ExerciseEntity] = []
-    @State var selectedWorkouts: [ExerciseEntity] = []
-    @State var selectedCooldowns: [ExerciseEntity] = []
+    @State var selectedWarmups: [ExerciseWrapper] = []
+    @State var selectedWorkouts: [ExerciseWrapper] = []
+    @State var selectedCooldowns: [ExerciseWrapper] = []
     @State private var selectedImage: UIImage?
     @State private var isImagePickerPresented: Bool = false
     @Binding var addWorkoutSheetPresented: Bool
@@ -22,13 +38,6 @@ struct NewWorkoutSheetView: View {
     var body: some View {
         NavigationView {
             VStack {
-//                if let unwrappedExercises = selectedWarmups {
-//                    List {
-//                        //                    ForEach(selectedExercises) { exercise in
-//                        Text(unwrappedExercises.name ?? "No Name")
-//                        //                    }
-//                    }
-//                }
                 Group {
                     if let unwrappedImage = selectedImage {
                         Image(uiImage: unwrappedImage)
@@ -81,11 +90,16 @@ struct NewWorkoutSheetView: View {
                     
                     Section {
                         NavigationLink("Warm-Up") {
-                            SelectExerciseView(type: "Warm-Up", selectedExercises: $selectedWarmups)
+                            SelectExerciseView(type: "Warm-Up", selectedExercises: Binding(
+                                get: { selectedWarmups.map { $0.entity } },
+                                set: { newValue in
+                                    selectedWarmups = newValue.map { ExerciseWrapper(entity: $0) }
+                                }
+                            ))
                         }
                         .foregroundColor(.accentColor)
-                        ForEach(selectedWarmups, id: \.self) { warmup in
-                            Text(warmup.name ?? "Unknown")
+                        ForEach(selectedWarmups) { wrapper in
+                            Text(wrapper.name)
                         }
                         .onDelete { offsets in
                             delete(at: offsets, from: &selectedWarmups)
@@ -100,11 +114,16 @@ struct NewWorkoutSheetView: View {
                     
                     Section {
                         NavigationLink("Workout") {
-                            SelectExerciseView(type: "Workout", selectedExercises: $selectedWorkouts)
+                            SelectExerciseView(type: "Workout", selectedExercises: Binding(
+                                get: { selectedWorkouts.map { $0.entity } },
+                                set: { newValue in
+                                    selectedWorkouts = newValue.map { ExerciseWrapper(entity: $0) }
+                                }
+                            ))
                         }
                         .foregroundColor(.accentColor)
-                        ForEach(selectedWorkouts, id: \.self) { workout in
-                            Text(workout.name ?? "Unknown")
+                        ForEach(selectedWorkouts) { wrapper in
+                            Text(wrapper.name)
                         }
                         .onDelete { offsets in
                             delete(at: offsets, from: &selectedWorkouts)
@@ -118,11 +137,16 @@ struct NewWorkoutSheetView: View {
                     
                     Section {
                         NavigationLink("Cool-Down") {
-                            SelectExerciseView(type: "Cool-Down", selectedExercises: $selectedCooldowns)
+                            SelectExerciseView(type: "Cool-Down", selectedExercises: Binding(
+                                get: { selectedCooldowns.map { $0.entity } },
+                                set: { newValue in
+                                    selectedCooldowns = newValue.map { ExerciseWrapper(entity: $0) }
+                                }
+                            ))
                         }
                         .foregroundColor(.accentColor)
-                        ForEach(selectedCooldowns, id: \.self) { cooldown in
-                            Text(cooldown.name ?? "Unknown")
+                        ForEach(selectedCooldowns) { wrapper in
+                            Text(wrapper.name)
                         }
                         .onDelete { offsets in
                             delete(at: offsets, from: &selectedCooldowns)
@@ -145,6 +169,11 @@ struct NewWorkoutSheetView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Done") {
                         guard !title.isEmpty || !desc.isEmpty else { return }
+                        // Convert wrappers back to entities before saving
+                        let warmupEntities = selectedWarmups.map { $0.entity }
+                        let workoutEntities = selectedWorkouts.map { $0.entity }
+                        let cooldownEntities = selectedCooldowns.map { $0.entity }
+                        
                         vm.addWorkout(title: title, desc: desc, cover: selectedImage)
                         title = ""
                         desc = ""
@@ -160,11 +189,11 @@ struct NewWorkoutSheetView: View {
         }
     }
     
-    private func delete(at offsets: IndexSet, from list: inout [ExerciseEntity]) {
+    private func delete(at offsets: IndexSet, from list: inout [ExerciseWrapper]) {
         list.remove(atOffsets: offsets)
     }
 
-    private func move(from source: IndexSet, to destination: Int, in list: inout [ExerciseEntity]) {
+    private func move(from source: IndexSet, to destination: Int, in list: inout [ExerciseWrapper]) {
         list.move(fromOffsets: source, toOffset: destination)
     }
 }
